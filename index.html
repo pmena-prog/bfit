@@ -323,6 +323,52 @@ select.log-input option{background:var(--s2)}
 .sleep-seg-row{display:flex;gap:2px;height:9px;border-radius:5px;overflow:hidden;margin:5px 0 3px}
 .ss{flex:none;height:100%;border-radius:2px}
 .ss-deep{background:#5856D6}.ss-light{background:#30A0FF}.ss-rem{background:#BF5AF2}.ss-wake{background:var(--border2)}
+
+/* PROFILE CARD */
+.profile-card{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--s2) 0%,#1A1A22 100%);border:1px solid var(--border2);border-radius:18px;padding:14px 15px;margin-bottom:11px;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;top:-24px;right:-24px;width:100px;height:100px;background:radial-gradient(circle,rgba(200,241,53,.10) 0%,transparent 70%);pointer-events:none}
+.profile-avatar{width:46px;height:46px;border-radius:14px;background:var(--lime-a);border:1px solid rgba(200,241,53,.3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--lime);flex-shrink:0}
+.profile-info{flex:1;min-width:0}
+.profile-greet{font-size:15px;font-weight:700;letter-spacing:-.02em;margin-bottom:2px}
+.profile-sub{font-family:var(--mono);font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.profile-battery{text-align:center;flex-shrink:0;padding-left:10px;border-left:1px solid var(--border2)}
+.profile-battery-val{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--teal);line-height:1}
+.profile-battery-label{font-size:7.5px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+
+/* WEIGHT COLLAPSE */
+.weight-collapsed{display:none;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border2);border-radius:16px;padding:13px 16px;margin-bottom:11px;cursor:pointer}
+.weight-collapsed.show{display:flex}
+.wc-icon{font-size:20px;flex-shrink:0}
+.wc-body{flex:1}
+.wc-val{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--lime);line-height:1}
+.wc-label{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+.weight-input-block{display:none}
+.weight-input-block.show{display:block}
+
+/* CONNECTIONS */
+.conn-tag{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;font-weight:700;white-space:nowrap}
+.conn-tag.synced{background:rgba(52,199,89,.12);color:var(--teal);border:1px solid rgba(52,199,89,.25)}
+.conn-tag.manual{background:rgba(255,159,10,.12);color:var(--amber);border:1px solid rgba(255,159,10,.25)}
+.conn-tag.off{background:var(--s3);color:var(--muted);border:1px solid var(--border2)}
+.conn-info-box{background:var(--s3);border-radius:11px;padding:11px 13px;font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.conn-info-box strong{color:var(--white)}
+.conn-info-box a{color:var(--lime);text-decoration:none}
+
+/* SUPP CHECK */
+.supp-item{cursor:pointer;transition:opacity .15s}
+.supp-name.done{color:var(--muted);text-decoration:line-through}
+.supp-time-badge.done{background:rgba(52,199,89,.12);color:var(--teal);border-color:rgba(52,199,89,.3)}
+
+/* FOOD ROW (individual meal items) */
+.food-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.food-row:last-child{border-bottom:none}
+.food-check{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;transition:all .15s}
+.food-check.done{background:var(--lime);border-color:var(--lime);color:var(--bg)}
+.food-name{flex:1;font-size:13px}
+.food-name.done{color:var(--muted);text-decoration:line-through}
+
+/* WEEK STRIP IN WORKOUT TAB */
+.week-strip-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:12px 14px 14px;margin-bottom:13px}
 </style>
 </head>
 <body>
@@ -331,7 +377,7 @@ select.log-input option{background:var(--s2)}
 <!-- HEADER -->
 <header class="header">
   <div class="header-top">
-    <div class="bfit-logo">
+    <div class="bfit-logo" onclick="showTab('home')" style="cursor:pointer">
       <div class="logo-b">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <rect x="3" y="2" width="3" height="16" rx="1.5" fill="#0A0A0A"/>
@@ -350,7 +396,6 @@ select.log-input option{background:var(--s2)}
       <div class="hw-delta" id="hDelta" style="color:var(--muted)">—</div>
     </div>
   </div>
-  <div class="week-strip" id="weekStrip"></div>
 </header>
 
 <!-- SCROLL AREA -->
@@ -358,6 +403,19 @@ select.log-input option{background:var(--s2)}
 
 <!-- ══ HOME ══ -->
 <div class="view active" id="view-home">
+
+  <!-- Profile / greeting -->
+  <div class="profile-card">
+    <div class="profile-avatar" id="profileAvatar">P</div>
+    <div class="profile-info">
+      <div class="profile-greet" id="profileGreet">Buenos días, Pato</div>
+      <div class="profile-sub"><span id="profileLevel">Nivel 1 · Principiante</span></div>
+    </div>
+    <div class="profile-battery">
+      <div class="profile-battery-val" id="profileBattery">—</div>
+      <div class="profile-battery-label">Battery</div>
+    </div>
+  </div>
 
   <!-- XP bar -->
   <div class="xp-bar-wrap">
@@ -449,24 +507,21 @@ select.log-input option{background:var(--s2)}
       <div class="garmin-logo">G</div>
       <div>
         <div style="font-size:12px;font-weight:700;color:#00B2FF">Garmin Connect</div>
-        <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">FC reposo 58 lpm · Estrés 22</div>
+        <div style="font-size:10px;color:var(--muted);font-family:var(--mono)" id="garminSub">FC reposo — · Estrés —</div>
       </div>
-      <div style="margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(255,159,10,.12);color:var(--amber);border:1px solid rgba(255,159,10,.25)">DEMO</div>
+      <div style="margin-left:auto" id="garminTag" class="conn-tag off">SIN DATOS</div>
     </div>
     <div style="font-size:8.5px;font-family:var(--mono);color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.09em">Body Battery</div>
-    <div class="battery-bg"><div class="battery-fill" style="width:74%;background:linear-gradient(90deg,#30A0FF,#34C759)"></div></div>
-    <div style="font-size:8.5px;font-family:var(--mono);color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.09em">Sueño anoche — 7h 12m</div>
+    <div class="battery-bg"><div class="battery-fill" id="garminBatteryFill" style="width:0%;background:linear-gradient(90deg,#30A0FF,#34C759)"></div></div>
+    <div style="font-size:8.5px;font-family:var(--mono);color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.09em" id="garminSleepLabel">Sueño anoche — sin datos</div>
     <div class="sleep-seg-row">
-      <div class="ss ss-deep" style="width:22%"></div>
-      <div class="ss ss-light" style="width:38%"></div>
-      <div class="ss ss-rem" style="width:28%"></div>
-      <div class="ss ss-wake" style="width:12%"></div>
+      <div class="ss ss-deep" id="ssDeep" style="width:0%"></div>
+      <div class="ss ss-light" id="ssLight" style="width:0%"></div>
+      <div class="ss ss-rem" id="ssRem" style="width:0%"></div>
+      <div class="ss ss-wake" id="ssWake" style="width:100%"></div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <span class="tag tag-blue">REM 2.0h</span>
-      <span class="tag tag-amber">Profundo 1.6h</span>
-      <span class="tag tag-teal">Calidad 82/100</span>
-    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px" id="garminTags"></div>
+    <button class="btn btn-ghost btn-full btn-sm" onclick="openGarminModal()">🔄 Actualizar datos Garmin</button>
   </div>
 
   <button class="btn btn-ghost btn-full" onclick="openModal('logModal')">+ Registrar sesión</button>
@@ -474,6 +529,10 @@ select.log-input option{background:var(--s2)}
 
 <!-- ══ WORKOUT ══ -->
 <div class="view" id="view-workout">
+  <div class="week-strip-card">
+    <div class="card-eyebrow" style="margin-bottom:6px">Tu semana</div>
+    <div class="week-strip" id="weekStrip"></div>
+  </div>
   <div style="display:flex;gap:5px;margin-bottom:13px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
     <button class="btn btn-lime btn-sm" onclick="switchWT(this,'wt-a')" id="wtab-a">💪 F.A</button>
     <button class="btn btn-ghost btn-sm" onclick="switchWT(this,'wt-b')" id="wtab-b">🦵 F.B</button>
@@ -576,6 +635,13 @@ select.log-input option{background:var(--s2)}
       <div class="prog-bg"><div class="prog-fill" id="nutrFatsBar" style="width:0%;background:var(--blue)"></div></div>
     </div>
   </div>
+
+  <!-- Suplementos -->
+  <div class="card card-sm" style="margin-bottom:11px">
+    <div class="card-eyebrow">Suplementos · Hoy</div>
+    <div id="suppList"></div>
+  </div>
+
   <div class="meal-row" id="mealPills"></div>
   <div class="card" id="mealDetail"><div style="color:var(--muted);font-size:13px">Selecciona una comida</div></div>
 </div>
@@ -583,7 +649,15 @@ select.log-input option{background:var(--s2)}
 <!-- ══ PESO ══ -->
 <div class="view" id="view-weight">
   <div class="sh">Peso <span>& Cuerpo</span></div>
-  <div class="weight-input-block">
+  <div class="weight-collapsed" id="weightCollapsed" onclick="expandWeightInput()">
+    <div class="wc-icon">✅</div>
+    <div class="wc-body">
+      <div class="wc-val" id="wcVal">— kg</div>
+      <div class="wc-label">Registrado hoy · toca para editar</div>
+    </div>
+    <div style="font-size:18px;color:var(--muted)">✎</div>
+  </div>
+  <div class="weight-input-block" id="weightInputBlock">
     <div class="wib-label">Peso de hoy (Eufy)</div>
     <div class="wib-main">
       <div class="wib-field">
@@ -597,7 +671,10 @@ select.log-input option{background:var(--s2)}
       <div class="wsf"><input type="number" step="0.1" placeholder="—" id="muscleIn" inputmode="decimal"><div class="wsf-label">Músculo kg</div></div>
     </div>
     <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="importCSV(event)">
-    <button class="btn btn-ghost btn-full mt2" style="font-size:11px" onclick="document.getElementById('csvFile').click()">⬆ Importar CSV de Eufy Life</button>
+    <div style="display:flex;gap:7px;margin-top:8px">
+      <button class="btn btn-ghost" style="flex:1;font-size:11px" onclick="document.getElementById('csvFile').click()">⬆ Importar CSV Eufy</button>
+      <button class="btn btn-ghost" style="font-size:11px;padding:10px 13px" onclick="openModal('eufyModal')">ℹ️</button>
+    </div>
   </div>
   <div class="kpi-strip" style="margin-bottom:11px">
     <div class="kpi-box"><div class="kpi-label">Actual</div><div class="kpi-val lime" id="pw-actual">—<span class="kpi-unit">kg</span></div><div class="kpi-sub" id="pw-day">Día 1</div></div>
@@ -638,16 +715,6 @@ select.log-input option{background:var(--s2)}
   <div class="card card-sm" style="margin-bottom:11px">
     <div class="card-eyebrow">Badges</div>
     <div class="badges-row" id="badgesRow"></div>
-  </div>
-
-  <!-- Suplementos -->
-  <div class="card card-sm" style="margin-bottom:11px">
-    <div class="card-eyebrow">Suplementos · Hoy</div>
-    <div class="supp-item"><div class="supp-icon">⚡</div><div class="supp-info"><div class="supp-name">Creatina Monohidrato</div><div class="supp-dose">5g · Winkler 600g</div></div><div class="supp-time-badge">07:00 ✅</div></div>
-    <div class="supp-item"><div class="supp-icon">☀️</div><div class="supp-info"><div class="supp-name">D3 + K2 Spray</div><div class="supp-dose">Pure Science · Cruz Verde</div></div><div class="supp-time-badge">07:00 ✅</div></div>
-    <div class="supp-item"><div class="supp-icon">🐟</div><div class="supp-info"><div class="supp-name">Omega-3 EPA+DHA</div><div class="supp-dose">2–3g · Pure Science</div></div><div class="supp-time-badge">13:30</div></div>
-    <div class="supp-item"><div class="supp-icon">🥤</div><div class="supp-info"><div class="supp-name">Whey Post-Entreno</div><div class="supp-dose">30g · Winkler Pro Win</div></div><div class="supp-time-badge">Post</div></div>
-    <div class="supp-item"><div class="supp-icon">🧲</div><div class="supp-info"><div class="supp-name">Magnesio Glicinato</div><div class="supp-dose">300–400mg · Winkler</div></div><div class="supp-time-badge">Noche</div></div>
   </div>
 
   <!-- Plan fases -->
@@ -702,9 +769,58 @@ select.log-input option{background:var(--s2)}
     <div class="modal-sub" id="mdSub"></div>
     <div id="mdFoods"></div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-lime" style="flex:1" onclick="markMealDone()">✓ Completada</button>
       <button class="btn btn-ghost" style="flex:1" onclick="closeModal('mealDetailModal')">Cerrar</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="garminModal" onclick="if(event.target===this)closeModal('garminModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Sincronizar Garmin Connect</div>
+    <div class="conn-info-box">
+      La <strong>Garmin Health API</strong> requiere aprobación de Garmin y un servidor con OAuth — no puede correr directo en el navegador. Mientras se aprueba el acceso, actualiza aquí los datos que ves en tu app Garmin Connect y quedarán reflejados en B·FIT.
+      <br><br>Solicita acceso en <a href="https://developer.garmin.com/gc-developer-program/health-api/" target="_blank">developer.garmin.com</a> (aprobación 2–4 semanas).
+    </div>
+    <div class="log-field"><div class="log-label">Body Battery (0–100)</div><input type="number" class="log-input" id="gBattery" placeholder="74" inputmode="numeric" min="0" max="100"></div>
+    <div style="display:flex;gap:9px">
+      <div class="log-field" style="flex:1"><div class="log-label">Sueño (horas)</div><input type="number" step="0.1" class="log-input" id="gSleepH" placeholder="7.2" inputmode="decimal"></div>
+      <div class="log-field" style="flex:1"><div class="log-label">Calidad sueño (0–100)</div><input type="number" class="log-input" id="gSleepScore" placeholder="82" inputmode="numeric"></div>
+    </div>
+    <div style="display:flex;gap:9px">
+      <div class="log-field" style="flex:1"><div class="log-label">FC reposo</div><input type="number" class="log-input" id="gRHR" placeholder="58" inputmode="numeric"></div>
+      <div class="log-field" style="flex:1"><div class="log-label">Estrés (0–100)</div><input type="number" class="log-input" id="gStress" placeholder="22" inputmode="numeric"></div>
+    </div>
+    <button class="btn btn-lime btn-full mt2" onclick="saveGarminData()">Guardar datos Garmin</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="eufyModal" onclick="if(event.target===this)closeModal('eufyModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Conectar Eufy Smart Scale</div>
+    <div class="conn-info-box">
+      Eufy <strong>no tiene una API pública oficial</strong>, así que una conexión automática en vivo no es posible desde una app web. Las dos formas reales de traer tus datos son:
+      <br><br><strong>1. CSV desde Eufy Life</strong> — abre la app Eufy Life → Perfil → Exportar datos → CSV, y súbelo en la pestaña Peso.
+      <br><br><strong>2. Apple Health</strong> — si sincronizas Eufy con Apple Salud, puedes exportar tu historial de peso desde ahí como CSV con el mismo formato.
+    </div>
+    <button class="btn btn-lime btn-full" onclick="closeModal('eufyModal');showTab('weight');setTimeout(()=>document.getElementById('csvFile').click(),300)">⬆ Importar CSV ahora</button>
+    <button class="btn btn-ghost btn-full mt2" onclick="closeModal('eufyModal')">Cerrar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="weeklySummaryModal" onclick="if(event.target===this)closeModal('weeklySummaryModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📊 Resumen de tu semana</div>
+    <div class="modal-sub" id="wsSub"></div>
+    <div class="kpi-strip" style="margin-bottom:11px">
+      <div class="kpi-box"><div class="kpi-label">Comidas</div><div class="kpi-val lime" id="wsMeals">0%</div></div>
+      <div class="kpi-box"><div class="kpi-label">Entrenos</div><div class="kpi-val teal" id="wsWorkouts">0/7</div></div>
+      <div class="kpi-box"><div class="kpi-label">Peso</div><div class="kpi-val" id="wsWeight">—</div></div>
+    </div>
+    <div class="note" id="wsMessage" style="margin-bottom:0"></div>
+    <button class="btn btn-lime btn-full mt2" onclick="closeModal('weeklySummaryModal')">Vamos con todo la próxima semana 💪</button>
   </div>
 </div>
 
@@ -743,6 +859,15 @@ const WEIGHT_START = 102.1;
 const GOAL_WEIGHT  = 89.0;
 const HEIGHT       = 1.78;
 const WATER_GOAL   = 3500; // ml
+const USER_NAME    = 'Pato';
+
+const SUPP_DEF = [
+  { id:'creatina', time:'07:00', h:7,  m:0,  icon:'⚡', name:'Creatina Monohidrato', dose:'5g · Winkler 600g' },
+  { id:'d3k2',     time:'07:00', h:7,  m:0,  icon:'☀️', name:'D3 + K2 Spray',        dose:'Pure Science · Cruz Verde' },
+  { id:'omega3',   time:'13:30', h:13, m:30, icon:'🐟', name:'Omega-3 EPA+DHA',      dose:'2–3g · Pure Science' },
+  { id:'whey',     time:'Post',  h:20, m:0,  icon:'🥤', name:'Whey Post-Entreno',    dose:'30g · Winkler Pro Win' },
+  { id:'magnesio', time:'Noche', h:22, m:0,  icon:'🧲', name:'Magnesio Glicinato',   dose:'300–400mg · Winkler' },
+];
 
 const WEEK_SCHEDULE = [
   { n:'L', icon:'💪', type:'Fuerza A', full:'Fuerza Tren Superior', meta:'60–70 min · Lunes', tags:['tag-lime','💪 Gym'], color:'var(--lime)' },
@@ -848,6 +973,8 @@ let alertCheckInterval = null;
 function loadState() {
   try { state = JSON.parse(localStorage.getItem('bfit_state') || '{}'); } catch(e) { state = {}; }
   if (!state.mealsDone)    state.mealsDone = {};
+  if (!state.foodsDone)    state.foodsDone = {};
+  if (!state.suppsDone)    state.suppsDone = {};
   if (!state.waterMl)      state.waterMl = {};
   if (!state.hitosDone)    state.hitosDone = {};
   if (!state.xpTotal)      state.xpTotal = 0;
@@ -857,6 +984,8 @@ function loadState() {
   if (!state.workoutCount) state.workoutCount = 0;
   if (!state.waterDays)    state.waterDays = 0;
   if (!state.totalDays)    state.totalDays = 1;
+  if (!state.garmin)       state.garmin = null;
+  if (!state.lastWeeklySummaryWeek) state.lastWeeklySummaryWeek = '';
 }
 
 function saveState() {
@@ -908,20 +1037,25 @@ window.addEventListener('DOMContentLoaded', () => {
   loadWeightLog();
   buildWeekStrip();
   buildHeader();
+  buildProfileCard();
   buildTodayBanner();
   buildExLists();
   buildMeals();
+  buildSupplements();
+  buildGarminCard();
   buildPhaseTiles('phaseTiles');
   buildPhaseTiles('planTiles');
   buildHitos();
   buildBadges();
   updateWeightUI();
+  updateWeightCollapse();
   updateXP();
   updateWater();
   updateNextMeal();
   checkMissedMeals();
   startTimers();
   checkNewDay();
+  checkWeeklySummary();
   // Request notification permission
   if ('Notification' in window && Notification.permission === 'default') {
     setTimeout(() => Notification.requestPermission(), 3000);
@@ -942,6 +1076,27 @@ function buildHeader() {
   if (diff < 0) { deltaEl.textContent = `${diff} kg`; deltaEl.style.color = 'var(--teal)'; }
   else if (diff > 0) { deltaEl.textContent = `+${diff} kg`; deltaEl.style.color = 'var(--red)'; }
   else { deltaEl.textContent = 'Inicio'; deltaEl.style.color = 'var(--muted)'; }
+}
+
+// ═══════════════════════════════════════════════════
+// PROFILE / GREETING
+// ═══════════════════════════════════════════════════
+function getGreeting() {
+  const h = today().getHours();
+  if (h < 12) return 'Buenos días';
+  if (h < 19) return 'Buenas tardes';
+  return 'Buenas noches';
+}
+
+function buildProfileCard() {
+  const av = document.getElementById('profileAvatar'); if (av) av.textContent = USER_NAME[0].toUpperCase();
+  const g = document.getElementById('profileGreet'); if (g) g.textContent = `${getGreeting()}, ${USER_NAME}`;
+  const xp = state.xpTotal||0;
+  let lvl = XP_LEVELS[0], lvlIdx = 0;
+  XP_LEVELS.forEach((l,i) => { if (xp >= l.min) { lvl = l; lvlIdx = i; } });
+  const lv = document.getElementById('profileLevel'); if (lv) lv.textContent = `Nivel ${lvlIdx+1} · ${lvl.name}`;
+  const bat = document.getElementById('profileBattery');
+  if (bat) bat.textContent = (state.garmin && state.garmin.battery != null) ? state.garmin.battery : '—';
 }
 
 // ═══════════════════════════════════════════════════
@@ -1057,17 +1212,59 @@ function completeWorkout(code, name) {
 }
 
 // ═══════════════════════════════════════════════════
-// MEALS
+// MEALS — individual food-level tracking
 // ═══════════════════════════════════════════════════
-function getMealState(mealId) {
-  const key = `${todayKey()}_${mealId}`;
-  return state.mealsDone[key] || 'pending';
+function getFoodDone(mealId, foodIdx) {
+  return !!state.foodsDone[`${todayKey()}_${mealId}_${foodIdx}`];
 }
 
-function setMealState(mealId, s) {
-  const key = `${todayKey()}_${mealId}`;
-  state.mealsDone[key] = s;
+function toggleFood(mealId, foodIdx) {
+  const key = `${todayKey()}_${mealId}_${foodIdx}`;
+  const wasDone = !!state.foodsDone[key];
+  state.foodsDone[key] = !wasDone;
   saveState();
+  onFoodToggled(mealId);
+}
+
+function onFoodToggled(mealId) {
+  // XP: award once when a meal becomes fully complete
+  const m = MEALS_DEF.find(mm=>mm.id===mealId);
+  const frac = getMealFraction(mealId);
+  const doneKey = todayKey()+'_'+mealId+'_full';
+  if (frac === 1 && !state.hitosDone[doneKey]) {
+    state.hitosDone[doneKey] = true;
+    saveState();
+  } else if (frac < 1 && state.hitosDone[doneKey]) {
+    delete state.hitosDone[doneKey];
+    saveState();
+  }
+  // 3+ meals hito
+  const fullCount = MEALS_DEF.filter(mm => getMealFraction(mm.id)===1).length;
+  if (fullCount >= 3 && !state.hitosDone[todayKey()+'_meals3']) {
+    awardXP('meals3', 30);
+    state.hitosDone[todayKey()+'_meals3'] = true;
+    saveState();
+    checkBadges();
+  }
+  buildMealPills();
+  buildMealDetail(currentMealIdx);
+  if (document.getElementById('mealDetailModal').classList.contains('open')) renderMealModalFoods(currentMealIdx);
+  updateNutrMacros();
+  buildHitos();
+}
+
+function getMealFraction(mealId) {
+  const m = MEALS_DEF.find(mm=>mm.id===mealId);
+  if (!m || !m.foods.length) return 0;
+  const doneCount = m.foods.filter((f,idx)=>getFoodDone(mealId, idx)).length;
+  return doneCount / m.foods.length;
+}
+
+function getMealState(mealId) {
+  const frac = getMealFraction(mealId);
+  if (frac === 1) return 'done';
+  if (frac > 0) return 'partial';
+  return 'pending';
 }
 
 function buildMeals() {
@@ -1083,12 +1280,14 @@ function buildMealPills() {
   const nowMin = now.getHours()*60 + now.getMinutes();
   c.innerHTML = MEALS_DEF.map((m,i) => {
     const st     = getMealState(m.id);
+    const frac   = getMealFraction(m.id);
     const mealMin= m.h*60 + m.m;
     const isPast = nowMin > mealMin + 30;
     const isNext = st==='pending' && nowMin < mealMin && (i===0 || getMealState(MEALS_DEF[i-1].id)==='done');
     let cls = 'meal-pill';
     let statusStr = `${m.kcal} kcal`;
     if (st==='done')    { cls+=' done'; statusStr='✅ OK'; }
+    else if (st==='partial') { cls+=' active'; const dc=m.foods.filter((f,idx)=>getFoodDone(m.id,idx)).length; statusStr=`${dc}/${m.foods.length}`; }
     else if (isPast && st==='pending') { cls+=' missed'; statusStr='⚠️ Omitida'; }
     else if (isNext)   { cls+=' next'; }
     return `<div class="${cls}" onclick="openMealDetail(${i})">
@@ -1099,56 +1298,58 @@ function buildMealPills() {
   }).join('');
 }
 
+function renderMealModalFoods(i) {
+  const m = MEALS_DEF[i];
+  document.getElementById('mdFoods').innerHTML = m.foods.map((f,idx) => {
+    const done = getFoodDone(m.id, idx);
+    return `<div class="food-row" onclick="toggleFood('${m.id}',${idx})">
+      <div class="food-check${done?' done':''}">${done?'✓':''}</div>
+      <div class="food-name${done?' done':''}">${f}</div>
+    </div>`;
+  }).join('');
+}
+
 function openMealDetail(i) {
   currentMealIdx = i;
   const m = MEALS_DEF[i];
-  const st = getMealState(m.id);
+  const frac = getMealFraction(m.id);
+  const dc = m.foods.filter((f,idx)=>getFoodDone(m.id,idx)).length;
   document.getElementById('mdTitle').textContent = `${m.name} · ${m.time}`;
-  document.getElementById('mdSub').textContent   = `${m.kcal} kcal · ${m.prot}g prot · ${m.carbs}g CHO · ${m.fat}g grasa`;
-  document.getElementById('mdFoods').innerHTML = m.foods.map(f =>
-    `<div class="ex-row"><div style="font-size:16px;width:22px;flex-shrink:0">${st==='done'?'✅':'○'}</div>
-    <div class="ex-info"><div style="font-size:13px">${f}</div></div></div>`
-  ).join('');
+  document.getElementById('mdSub').textContent   = `${dc}/${m.foods.length} alimentos · ${m.kcal} kcal · ${m.prot}g prot · ${m.carbs}g CHO · ${m.fat}g grasa`;
+  renderMealModalFoods(i);
   openModal('mealDetailModal');
 }
 
-function markMealDone() {
-  const m = MEALS_DEF[currentMealIdx];
-  setMealState(m.id, 'done');
-  // XP
-  const doneCount = MEALS_DEF.filter(mm => getMealState(mm.id)==='done').length;
-  if (doneCount === 3 && !state.hitosDone[todayKey()+'_meals3']) {
-    awardXP('meals3', 30);
-    state.hitosDone[todayKey()+'_meals3'] = true;
-    saveState();
-  }
-  closeModal('mealDetailModal');
-  buildMealPills();
-  buildMealDetail(currentMealIdx);
-  updateNutrMacros();
-  buildHitos();
-  toast(`${m.name} registrada ✓`, 'ok');
-}
-
 function buildMealDetail(i) {
-  // also shown inline on nutrition view
+  // also shown inline on nutrition view — individually checkable, same pattern as exercises
   const m = MEALS_DEF[i];
   const st = getMealState(m.id);
+  const dc = m.foods.filter((f,idx)=>getFoodDone(m.id,idx)).length;
   const el = document.getElementById('mealDetail');
   if (!el) return;
-  el.innerHTML = `<div class="card-eyebrow">${m.name} · ${m.time} · ${m.kcal} kcal</div>
-    <div class="ex-list">${m.foods.map(f=>`<div class="ex-row">
-      <div style="font-size:16px;width:20px;flex-shrink:0">${st==='done'?'✅':'○'}</div>
-      <div class="ex-info"><div style="font-size:13px">${f}</div></div>
-    </div>`).join('')}</div>
-    <button class="btn ${st==='done'?'btn-ghost':'btn-lime'} btn-full mt2" onclick="openMealDetail(${i})">
-      ${st==='done'?'✓ Completada — ver detalle':'Marcar como completada'}
-    </button>`;
+  el.innerHTML = `<div class="flex-between" style="margin-bottom:8px">
+      <div class="card-eyebrow" style="margin-bottom:0">${m.name} · ${m.time} · ${m.kcal} kcal</div>
+      <div style="font-family:var(--mono);font-size:10px;color:${st==='done'?'var(--teal)':'var(--lime)'}">${dc}/${m.foods.length}</div>
+    </div>
+    <div>${m.foods.map((f,idx)=>{
+      const done = getFoodDone(m.id, idx);
+      return `<div class="food-row" onclick="toggleFood('${m.id}',${idx})">
+        <div class="food-check${done?' done':''}">${done?'✓':''}</div>
+        <div class="food-name${done?' done':''}">${f}</div>
+      </div>`;
+    }).join('')}</div>`;
 }
 
 function updateNutrMacros() {
   let kcal=0, prot=0, carbs=0, fats=0;
-  MEALS_DEF.forEach(m => { if (getMealState(m.id)==='done') { kcal+=m.kcal; prot+=m.prot; carbs+=m.carbs; fats+=m.fat; } });
+  MEALS_DEF.forEach(m => {
+    const frac = getMealFraction(m.id);
+    kcal  += m.kcal  * frac;
+    prot  += m.prot  * frac;
+    carbs += m.carbs * frac;
+    fats  += m.fat   * frac;
+  });
+  kcal=Math.round(kcal); prot=Math.round(prot); carbs=Math.round(carbs); fats=Math.round(fats);
   document.getElementById('nutrKcalTotal').textContent = `${kcal} / 2,450 kcal`;
   document.getElementById('nutrProt').textContent  = `${prot} / 190g`;
   document.getElementById('nutrCarbs').textContent = `${carbs} / 220g`;
@@ -1157,9 +1358,37 @@ function updateNutrMacros() {
   document.getElementById('nutrCarbsBar').style.width = Math.min(100, (carbs/220)*100)+'%';
   document.getElementById('nutrFatsBar').style.width  = Math.min(100, (fats/70)*100)+'%';
   // badge on tab if missed meals
-  const missed = MEALS_DEF.filter(m => { const nowMin=today().getHours()*60+today().getMinutes(); return getMealState(m.id)==='pending' && nowMin > m.h*60+m.m+30; }).length;
+  const missed = MEALS_DEF.filter(m => { const nowMin=today().getHours()*60+today().getMinutes(); return getMealState(m.id)!=='done' && nowMin > m.h*60+m.m+30; }).length;
   const b = document.getElementById('badge-nutr');
   if (b) { b.style.display = missed > 0 ? 'block' : 'none'; }
+}
+
+// ═══════════════════════════════════════════════════
+// SUPPLEMENTS
+// ═══════════════════════════════════════════════════
+function getSuppDone(id) { return !!state.suppsDone[`${todayKey()}_${id}`]; }
+
+function toggleSupp(id) {
+  const key = `${todayKey()}_${id}`;
+  state.suppsDone[key] = !state.suppsDone[key];
+  saveState();
+  buildSupplements();
+}
+
+function buildSupplements() {
+  const c = document.getElementById('suppList');
+  if (!c) return;
+  c.innerHTML = SUPP_DEF.map(s => {
+    const done = getSuppDone(s.id);
+    return `<div class="supp-item" onclick="toggleSupp('${s.id}')">
+      <div class="supp-icon">${s.icon}</div>
+      <div class="supp-info">
+        <div class="supp-name${done?' done':''}">${s.name}</div>
+        <div class="supp-dose">${s.dose}</div>
+      </div>
+      <div class="supp-time-badge${done?' done':''}">${done?'✅':s.time}</div>
+    </div>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1202,6 +1431,78 @@ function updateWater() {
 }
 
 // ═══════════════════════════════════════════════════
+// GARMIN CONNECT (manual sync — real OAuth requires a backend)
+// ═══════════════════════════════════════════════════
+function openGarminModal() {
+  const g = state.garmin;
+  document.getElementById('gBattery').value    = g ? g.battery    : '';
+  document.getElementById('gSleepH').value     = g ? g.sleepH     : '';
+  document.getElementById('gSleepScore').value = g ? g.sleepScore : '';
+  document.getElementById('gRHR').value        = g ? g.rhr        : '';
+  document.getElementById('gStress').value     = g ? g.stress     : '';
+  openModal('garminModal');
+}
+
+function saveGarminData() {
+  const battery    = parseInt(document.getElementById('gBattery').value);
+  const sleepH     = parseFloat(document.getElementById('gSleepH').value);
+  const sleepScore = parseInt(document.getElementById('gSleepScore').value);
+  const rhr        = parseInt(document.getElementById('gRHR').value);
+  const stress     = parseInt(document.getElementById('gStress').value);
+  if (isNaN(battery) && isNaN(sleepH)) { toast('Ingresa al menos Body Battery o Sueño','err'); return; }
+  state.garmin = {
+    battery: isNaN(battery) ? (state.garmin?state.garmin.battery:null) : Math.max(0,Math.min(100,battery)),
+    sleepH: isNaN(sleepH) ? (state.garmin?state.garmin.sleepH:null) : sleepH,
+    sleepScore: isNaN(sleepScore) ? (state.garmin?state.garmin.sleepScore:null) : sleepScore,
+    rhr: isNaN(rhr) ? (state.garmin?state.garmin.rhr:null) : rhr,
+    stress: isNaN(stress) ? (state.garmin?state.garmin.stress:null) : stress,
+    date: todayKey()
+  };
+  saveState();
+  buildGarminCard();
+  buildProfileCard();
+  closeModal('garminModal');
+  toast('Datos Garmin actualizados ✓','ok');
+}
+
+function buildGarminCard() {
+  const g = state.garmin;
+  const tagEl = document.getElementById('garminTag');
+  if (!g) {
+    if (tagEl) { tagEl.className='conn-tag off'; tagEl.textContent='SIN DATOS'; }
+    document.getElementById('garminSub').textContent = 'FC reposo — · Estrés —';
+    document.getElementById('garminBatteryFill').style.width = '0%';
+    document.getElementById('garminSleepLabel').textContent = 'Sueño anoche — sin datos';
+    document.getElementById('garminTags').innerHTML = '';
+    ['ssDeep','ssLight','ssRem','ssWake'].forEach(id=>document.getElementById(id).style.width = id==='ssWake'?'100%':'0%');
+    const kb=document.getElementById('kBattery'); if(kb) kb.innerHTML='—<span class="kpi-unit">/100</span>';
+    const ks2=document.getElementById('kSleep'); if(ks2) ks2.innerHTML='—<span class="kpi-unit">h</span>';
+    return;
+  }
+  const isToday = g.date === todayKey();
+  if (tagEl) {
+    tagEl.className = 'conn-tag ' + (isToday?'synced':'manual');
+    tagEl.textContent = isToday ? 'ACTUALIZADO HOY' : `MANUAL · ${g.date}`;
+  }
+  document.getElementById('garminSub').textContent = `FC reposo ${g.rhr||'—'} lpm · Estrés ${g.stress!=null?g.stress:'—'}`;
+  document.getElementById('garminBatteryFill').style.width = (g.battery||0)+'%';
+  document.getElementById('garminSleepLabel').textContent = g.sleepH ? `Sueño anoche — ${Math.floor(g.sleepH)}h ${Math.round((g.sleepH%1)*60)}m` : 'Sueño anoche — sin datos';
+  if (g.sleepH) {
+    const deep=22, light=50, rem=22, wake=6;
+    document.getElementById('ssDeep').style.width=deep+'%';
+    document.getElementById('ssLight').style.width=light+'%';
+    document.getElementById('ssRem').style.width=rem+'%';
+    document.getElementById('ssWake').style.width=wake+'%';
+    document.getElementById('garminTags').innerHTML = `
+      <span class="tag tag-blue">REM ${(g.sleepH*rem/100).toFixed(1)}h</span>
+      <span class="tag tag-amber">Profundo ${(g.sleepH*deep/100).toFixed(1)}h</span>
+      ${g.sleepScore?`<span class="tag tag-teal">Calidad ${g.sleepScore}/100</span>`:''}`;
+  }
+  const kb=document.getElementById('kBattery'); if(kb) kb.innerHTML=`${g.battery!=null?g.battery:'—'}<span class="kpi-unit">/100</span>`;
+  const ks2=document.getElementById('kSleep'); if(ks2) ks2.innerHTML=`${g.sleepH!=null?g.sleepH:'—'}<span class="kpi-unit">h</span>`;
+}
+
+// ═══════════════════════════════════════════════════
 // WEIGHT
 // ═══════════════════════════════════════════════════
 function saveWeight() {
@@ -1224,7 +1525,36 @@ function saveWeight() {
   updateWeightUI();
   buildHeader();
   checkBadges();
+  updateWeightCollapse();
   toast(`${w} kg guardado ✓`,'ok');
+}
+
+function updateWeightCollapse() {
+  const dt = todayStr();
+  const entry = weightLog.find(d=>d.date===dt);
+  const collapsedEl = document.getElementById('weightCollapsed');
+  const inputEl = document.getElementById('weightInputBlock');
+  if (!collapsedEl || !inputEl) return;
+  if (entry) {
+    document.getElementById('wcVal').textContent = `${entry.weight} kg`;
+    collapsedEl.classList.add('show');
+    inputEl.classList.remove('show');
+  } else {
+    collapsedEl.classList.remove('show');
+    inputEl.classList.add('show');
+  }
+}
+
+function expandWeightInput() {
+  document.getElementById('weightCollapsed').classList.remove('show');
+  document.getElementById('weightInputBlock').classList.add('show');
+  const dt = todayStr();
+  const entry = weightLog.find(d=>d.date===dt);
+  if (entry) {
+    document.getElementById('weightIn').value = entry.weight;
+    if (entry.fat) document.getElementById('fatIn').value = entry.fat;
+    if (entry.muscle) document.getElementById('muscleIn').value = entry.muscle;
+  }
 }
 
 function updateWeightUI() {
@@ -1282,6 +1612,7 @@ function importCSV(event) {
     saveWeightLog();
     updateWeightUI();
     buildHeader();
+    updateWeightCollapse();
     toast(`${imp} registros importados ✓`,'ok');
   };
   reader.readAsText(file);
@@ -1371,6 +1702,7 @@ function updateXP() {
   const emax=document.getElementById('xpLevelMax'); if(emax)emax.textContent=lvl.max+' XP';
   const ed=document.getElementById('xpDay'); if(ed)ed.textContent=planDayN();
   const ks=document.getElementById('kStreak'); if(ks)ks.innerHTML=`${state.streak||0}<span class="kpi-unit">d</span>`;
+  buildProfileCard();
 }
 
 function buildHitos() {
@@ -1434,6 +1766,7 @@ function startTimers() {
     updateNextMeal();
     buildMealPills();
     updateNutrMacros();
+    checkWeeklySummary();
   }, 60000); // every minute
   alertCheckInterval = setInterval(checkMealAlerts, 60000);
 }
@@ -1465,11 +1798,11 @@ function checkMealAlerts() {
     const snoozedUntil=alertSnooze[snoozeKey]||0;
     if(nowMin>snoozedUntil){
       // 20 min before
-      if(Math.abs(nowMin-(mealMin-20))<=1&&getMealState(m.id)==='pending'){
+      if(Math.abs(nowMin-(mealMin-20))<=1&&getMealState(m.id)!=='done'){
         showAlert(`⏰ ${m.name} en 20 minutos`,`Prepara tu ${m.name.toLowerCase()} (${m.time}). ${m.foods[0]}.`,m.id+'_pre');
       }
       // Missed (30+ min late)
-      if(nowMin>mealMin+30&&getMealState(m.id)==='pending'){
+      if(nowMin>mealMin+30&&getMealState(m.id)!=='done'){
         showAlert(`⚠️ ${m.name} sin registrar`,`Son las ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}. ¿Comiste tu ${m.name.toLowerCase()} de las ${m.time}?`,m.id+'_missed');
       }
     }
@@ -1480,7 +1813,7 @@ function checkMissedMeals() {
   // On app open, check for any missed meals
   const now=today();
   const nowMin=now.getHours()*60+now.getMinutes();
-  const missed=MEALS_DEF.filter(m=>getMealState(m.id)==='pending'&&nowMin>m.h*60+m.m+60);
+  const missed=MEALS_DEF.filter(m=>getMealState(m.id)!=='done'&&nowMin>m.h*60+m.m+60);
   if(missed.length>0){
     setTimeout(()=>showAlert(`⚠️ ${missed.length} comida(s) sin registrar`,`${missed.map(m=>m.name+' ('+m.time+')').join(', ')} — ¿las completaste?`,'missed_check'),1500);
   }
@@ -1535,6 +1868,83 @@ function checkNewDay() {
 }
 
 // ═══════════════════════════════════════════════════
+// WEEKLY SUMMARY — Sunday night recap
+// ═══════════════════════════════════════════════════
+function getISOWeekKey(d) {
+  const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = dt.getUTCDay() || 7;
+  dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+  const weekNo = Math.ceil((((dt - yearStart) / 86400000) + 1)/7);
+  return `${dt.getUTCFullYear()}-W${weekNo}`;
+}
+
+function dateStrDaysAgo(n) {
+  const d = new Date(today());
+  d.setDate(d.getDate()-n);
+  return d.toISOString().split('T')[0];
+}
+
+function computeWeekStats() {
+  const days = [0,1,2,3,4,5,6].map(n=>dateStrDaysAgo(n)); // today..6 days ago
+  let mealFracSum = 0, mealMax = 0;
+  days.forEach(dt => {
+    MEALS_DEF.forEach(m => {
+      mealMax++;
+      const doneCount = m.foods.filter((f,idx)=>!!state.foodsDone[`${dt}_${m.id}_${idx}`]).length;
+      mealFracSum += m.foods.length ? doneCount/m.foods.length : 0;
+    });
+  });
+  const mealPct = mealMax ? Math.round((mealFracSum/mealMax)*100) : 0;
+  const workoutsDone = days.filter(dt => !!state.workoutDone[dt]).length;
+  // weight trend: compare oldest entry in the 7-day window vs latest
+  const weekEntries = weightLog.filter(w => days.includes(w.date)).sort((a,b)=>a.date.localeCompare(b.date));
+  let weightTrend = null;
+  if (weekEntries.length >= 2) weightTrend = +(weekEntries[weekEntries.length-1].weight - weekEntries[0].weight).toFixed(1);
+  return { mealPct, workoutsDone, weightTrend, latestWeight: weekEntries.length?weekEntries[weekEntries.length-1].weight:null };
+}
+
+function checkWeeklySummary() {
+  const now = today();
+  if (now.getDay() !== 0 || now.getHours() < 20) return; // Sunday, after 20:00
+  const wk = getISOWeekKey(now);
+  if (state.lastWeeklySummaryWeek === wk) return;
+  const stats = computeWeekStats();
+  showWeeklySummary(stats);
+  state.lastWeeklySummaryWeek = wk;
+  saveState();
+}
+
+function showWeeklySummary(stats) {
+  const nowD = today();
+  document.getElementById('wsSub').textContent = `Semana del ${formatDateES(new Date(dateStrDaysAgo(6)+'T12:00:00'))} al ${formatDateES(nowD)}`;
+  document.getElementById('wsMeals').textContent = stats.mealPct + '%';
+  document.getElementById('wsWorkouts').textContent = stats.workoutsDone + '/7';
+  const wEl = document.getElementById('wsWeight');
+  if (stats.weightTrend === null) wEl.textContent = '—';
+  else wEl.textContent = (stats.weightTrend<=0?stats.weightTrend:'+'+stats.weightTrend) + ' kg';
+
+  let msg;
+  const good = stats.mealPct >= 70 && stats.workoutsDone >= 3;
+  const weightGood = stats.weightTrend !== null && stats.weightTrend <= 0;
+  if (good && weightGood) {
+    msg = `¡Semana sólida, ${USER_NAME}! Cumpliste ${stats.mealPct}% de tus comidas y ${stats.workoutsDone} entrenos, y tu peso va en la dirección correcta. Así se construye el resultado en 180 días — arranca la próxima semana con esa misma energía. 💪`;
+  } else if (good) {
+    msg = `Buena semana de disciplina, ${USER_NAME}: ${stats.mealPct}% de comidas y ${stats.workoutsDone} entrenos completados. El peso puede moverse más lento algunas semanas — sigue firme con el plan, la tendencia se ajusta con consistencia.`;
+  } else if (stats.mealPct >= 50 || stats.workoutsDone >= 2) {
+    msg = `Semana pareja, ${USER_NAME}. Vas construyendo el hábito — ${stats.mealPct}% de comidas y ${stats.workoutsDone} entrenos. La próxima semana, elige 1 o 2 cosas puntuales para subir el estándar y vuelve con todo.`;
+  } else {
+    msg = `Semana más floja en el registro, ${USER_NAME}, y está bien — lo importante es retomar. Empieza la próxima semana con el entreno de mañana y las primeras 3 comidas del día bien marcadas. Un paso a la vez.`;
+  }
+  document.getElementById('wsMessage').innerHTML = msg;
+  openModal('weeklySummaryModal');
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('📊 Resumen de tu semana', { body: `${stats.mealPct}% comidas · ${stats.workoutsDone}/7 entrenos` });
+  }
+}
+
+
+// ═══════════════════════════════════════════════════
 // MISC
 // ═══════════════════════════════════════════════════
 function saveSessionLog(){
@@ -1552,7 +1962,8 @@ function clearAll(){
   localStorage.removeItem('bfit_state');
   localStorage.removeItem('bfit_weights');
   loadState(); loadWeightLog();
-  updateWeightUI(); updateXP(); updateWater(); buildHitos(); buildBadges();
+  updateWeightUI(); updateWeightCollapse(); updateXP(); updateWater(); buildHitos(); buildBadges();
+  buildMeals(); buildSupplements(); buildGarminCard(); buildProfileCard();
   toast('Datos eliminados','inf');
 }
 
